@@ -29,6 +29,9 @@ app.get("/", (req, res) => {
   res.send("Backend is running");
 });
 
+console.log("API Routes:");
+
+
 // Global error handler middleware
 app.use((err, req, res, next) => {
   console.error("\n" + "🔴".repeat(30));
