@@ -2,17 +2,18 @@ import React from "react";
 import { useproduct } from "../context/ProductList";
 
 const PoductView = () => {
-    const {setShowProductView} = useproduct()
+  const { setShowProductView } = useproduct();
+  const fileInputRef = React.useRef(null);
 
-    const [form, setForm] = React.useState({
-        name : "",
-        price : "",
-        category : "",
-        Description : "",
-        imageUrl : null
-    })
+  const [form, setForm] = React.useState({
+    name: "",
+    price: "",
+    category: "",
+    Description: "",
+    imageUrl: null,
+  });
 
-    const handlechange = (e) => {
+  const handlechange = (e) => {
     const { name, value } = e.target;
 
     setForm((prev) => ({
@@ -20,6 +21,15 @@ const PoductView = () => {
       [name]: value,
     }));
   };
+
+  const handleFileChange = (e) => {
+    setForm((prev) => ({
+      ...prev,
+      image: e.target.files[0],
+    }));
+  };
+
+  const handleSubmit = async (e) => {
     const formData = new FormData();
     formData.append("name", form.name);
     formData.append("price", form.price);
@@ -28,23 +38,35 @@ const PoductView = () => {
     // Assuming you have an input for image file and it's stored in form.imageFile
     formData.append("imageUrl", form.imageUrl);
 
-  const handleSubmit = async (e) => {
+
     e.preventDefault();
+
     try {
       await Api.post("/products", formData);
-     
+
       toast.success("Product added successfully!");
-      setForm({ name: "", price: "", category: "", Description: "", imageUrl: null });
+      setForm({
+        name: "",
+        price: "",
+        category: "",
+        Description: "",
+        imageUrl: null,
+      });
+      if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (err) {
       console.error(err);
-      toast.error(err.response?.data?.error || err.message || "Failed to add product");
+      toast.error(err.response?.data?.error || err.message || "Failed to add product",);
     }
   };
 
 
+
   return (
     <>
-      <div onClick={()=>setShowProductView(false)} className="fixed inset-0 z-50 bg-black/80 "></div>
+      <div
+        onClick={() => setShowProductView(false)}
+        className="fixed inset-0 z-50 bg-black/80 "
+      ></div>
 
       <div
         className="fixed left-[50%] top-[50%] z-50 grid w-full translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 sm:rounded-lg max-w-md"
@@ -113,7 +135,9 @@ const PoductView = () => {
               </svg>
             </button> */}
             <select
-             
+              name="category"
+              value={form.category}
+              onChange={handlechange}
               style={{
                 // position: "absolute",
                 // border: "1px solid gray",
@@ -128,7 +152,7 @@ const PoductView = () => {
               }}
               className="my-4 rounded-md px-4 py-2 text-sm border-input border  text-muted-foreground  ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
             >
-              <option value="birthday" selected="" >
+              <option value="birthday" selected="">
                 Birthday
               </option>
               <option value="wedding">Wedding</option>
@@ -154,11 +178,33 @@ const PoductView = () => {
             <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
               Image URL
             </label>
-            <input
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-              placeholder="https://..."
-              value="/placeholder.svg"
-            />
+            <label className="border-2 border-dashed rounded-lg p-6 text-center cursor-pointer hover:border-primary/50 transition block">
+                  <div className="space-y-2">
+                    {form.image ? (
+                      <>
+                        <p className="text-sm font-medium text-green-600">
+                          ✅ {form.image.name}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {(form.image.size / 1024).toFixed(2)} KB
+                        </p>
+                      </>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">
+                        Click to upload or drag and drop
+                      </p>
+                    )}
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    name="image"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    className="hidden"
+                    required
+                  />
+                </label>
           </div>
           <button
             className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&amp;_svg]:pointer-events-none [&amp;_svg]:size-4 [&amp;_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full gradient-primary"
@@ -169,7 +215,7 @@ const PoductView = () => {
         </form>
         <button
           type="button"
-          onClick={()=>setShowProductView(false)}
+          onClick={() => setShowProductView(false)}
           className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity  hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
         >
           <svg
