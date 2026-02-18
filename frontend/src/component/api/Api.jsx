@@ -2,7 +2,7 @@ import axios from "axios";
 
 const Api = axios.create({
   baseURL: "https://sweet-delights-cake.onrender.com/api",
-    headers: { "Content-Type": "multipart/form-data" },
+    // headers: { "Content-Type": "multipart/form-data" },
     withCredentials: true, // Include cookies in requests
 });
 
