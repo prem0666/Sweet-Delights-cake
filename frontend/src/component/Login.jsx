@@ -3,6 +3,7 @@ import Api from "./api/Api";
 // import { useAuth } from "./context/Auth";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./context/Auth";
+import { toast } from "sonner";
 
 const Login = () => {
   const [login1, setLogin] = useState(true);
@@ -37,11 +38,13 @@ const handleLoginSubmit = async (e) => {
     const res = await Api.post("/login", formLogin);
     const data = res.data || res;
     login(data.user, data.token);
-    alert("Logged in");
+
+    toast.success("Logged in successfully!");
     navigate("/");
   } catch (err) {
     console.error(err);
-    alert(err.response?.data?.error || err.message || "Login failed");
+    toast.error(err.response?.data?.error || err.message || "Login failed");
+    
   } finally {
     setLoadingAuth(false);
   }
@@ -293,7 +296,7 @@ const handleLoginSubmit = async (e) => {
                     onClick={async (e) => {
                       e.preventDefault();
                       if (formSignup.password !== formSignup.confirm) {
-                        alert("Passwords do not match");
+                        toast.error("Passwords do not match");
                         return;
                       }
                       setLoadingAuth(true);
@@ -307,11 +310,11 @@ const handleLoginSubmit = async (e) => {
                         const res = await Api.post("/register", payload);
                         const data = res.data || res;
                         login(data.user, data.token);
-                        alert("Account created");
+                        toast.success("Account created successfully!");
                         navigate("/");
                       } catch (err) {
                         console.error(err);
-                        alert(err.response?.data?.error || err.message || "Signup failed");
+                        toast.error(err.response?.data?.error || err.message || "Signup failed");
                       } finally {
                         setLoadingAuth(false);
                       }

@@ -3,6 +3,45 @@ import { useproduct } from "../context/ProductList";
 
 const PoductView = () => {
     const {setShowProductView} = useproduct()
+
+    const [form, setForm] = React.useState({
+        name : "",
+        price : "",
+        category : "",
+        Description : "",
+        imageUrl : null
+    })
+
+    const handlechange = (e) => {
+    const { name, value } = e.target;
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+    const formData = new FormData();
+    formData.append("name", form.name);
+    formData.append("price", form.price);
+    formData.append("category", form.category);
+    formData.append("Description", form.Description);
+    // Assuming you have an input for image file and it's stored in form.imageFile
+    formData.append("imageUrl", form.imageUrl);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await Api.post("/products", formData);
+     
+      toast.success("Product added successfully!");
+      setForm({ name: "", price: "", category: "", Description: "", imageUrl: null });
+    } catch (err) {
+      console.error(err);
+      toast.error(err.response?.data?.error || err.message || "Failed to add product");
+    }
+  };
+
+
   return (
     <>
       <div onClick={()=>setShowProductView(false)} className="fixed inset-0 z-50 bg-black/80 "></div>
@@ -16,7 +55,7 @@ const PoductView = () => {
             Add New Product
           </h2>
         </div>
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">
             <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
               Product Name *
@@ -24,7 +63,9 @@ const PoductView = () => {
             <input
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
               placeholder="Chocolate Cake"
-              value=""
+              value={form.name}
+              onChange={handlechange}
+              name="name"
             />
           </div>
           <div className="space-y-2">
@@ -35,14 +76,16 @@ const PoductView = () => {
               type="number"
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
               placeholder="1000"
-              value=""
+              value={form.price}
+              onChange={handlechange}
+              name="price"
             />
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            <label className="text-sm font-medium leading-none flex flex-col ">
               Category *
             </label>
-            <button
+            {/* <button
               type="button"
               role="combobox"
               aria-controls="radix-:r1h:"
@@ -68,24 +111,24 @@ const PoductView = () => {
               >
                 <path d="m6 9 6 6 6-6"></path>
               </svg>
-            </button>
+            </button> */}
             <select
-              aria-hidden="true"
-              tabindex="-1"
+             
               style={{
-                position: "absolute",
-                border: "0px",
-                width: "1px",
-                height: "1px",
-                padding: "0px",
-                margin: "-1px",
+                // position: "absolute",
+                // border: "1px solid gray",
+                // width: "1px",
+                // height: "1px",
+                // padding: "0px",
+                // margin: "1px",
                 overflow: "hidden",
-                clip: "rect(0px, 0px, 0px, 0px)",
+                // clip: "rect(0px, 0px, 0px, 0px)",
                 whiteSpace: "nowrap",
                 overflowWrap: "normal",
               }}
+              className="my-4 rounded-md px-4 py-2 text-sm border-input border  text-muted-foreground  ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
             >
-              <option value="birthday" selected="">
+              <option value="birthday" selected="" >
                 Birthday
               </option>
               <option value="wedding">Wedding</option>
@@ -102,6 +145,9 @@ const PoductView = () => {
               className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               placeholder="Delicious cake with..."
               rows="3"
+              value={form.Description}
+              onChange={handlechange}
+              name="Description"
             ></textarea>
           </div>
           <div className="space-y-2">
@@ -123,7 +169,8 @@ const PoductView = () => {
         </form>
         <button
           type="button"
-          className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity data-[state=open]:bg-accent data-[state=open]:text-muted-foreground hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
+          onClick={()=>setShowProductView(false)}
+          className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity  hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

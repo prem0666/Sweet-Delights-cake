@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Api from "./api/Api";
+import { toast } from "sonner";
 
 const Contact = () => {
 
@@ -22,11 +23,12 @@ const Contact = () => {
     e.preventDefault();
     try {
       await Api.post("/contact", form);
-      alert("Message sent. We'll get back to you soon.");
+     
+      toast.success("Message sent successfully!");
       setForm({ name: "", email: "", phone: "", message: "" });
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.error || err.message || "Failed to send message");
+      toast.error(err.response?.data?.error || err.message || "Failed to send message");
     }
   };
   // console.log(form)

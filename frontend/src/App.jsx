@@ -9,6 +9,7 @@ import Admin from "./component/Admin";
 import Layout from "./component/Layout";
 import Login from "./component/Login";
 import { AuthProvider, useAuth } from "./component/context/Auth";
+import { Toaster } from "sonner";
 
 const RequireAuth = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -19,6 +20,7 @@ const RequireAuth = ({ children }) => {
 const App = () => {
   return (
     <AuthProvider>
+      <Toaster position="top-right" />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />

@@ -40,15 +40,15 @@ const CoustomCake = () => {
   const postData = async () => {
     // Basic validation
     if (!form.name || !form.email || !form.phone) {
-      alert("Name, Email, and Phone are required.");
+      toast.error("Name, Email, and Phone are required.");
       return;
     }
     if (!form.image) {
-      alert("Please attach a reference image.");
+      toast.error("Please attach a reference image.");
       return;
     }
     if (form.cakeSize == 0 || form.flavor == 0 || form.shape == 0) {
-      alert("Please select Cake Size, Flavor, and Shape.");
+      toast.error("Please select Cake Size, Flavor, and Shape.");
       return;
     }
 
@@ -66,7 +66,7 @@ const CoustomCake = () => {
     setLoading(true);
     try {
       const response = await Api.post("/custom", formData);
-      alert("Order placed successfully.");
+      toast.success("Order placed successfully.");
 
       // Reset form
       setForm({
@@ -83,7 +83,7 @@ const CoustomCake = () => {
       if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (error) {
       console.error(error);
-      alert(error.response?.data?.error || error.message || "Submission failed.");
+      toast.error(error.response?.data?.error || error.message || "Submission failed.");
     } finally {
       setLoading(false);
     }
