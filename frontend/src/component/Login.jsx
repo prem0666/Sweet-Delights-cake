@@ -34,9 +34,9 @@ const handleChange = (setter) => (e) => {
 const handleLoginSubmit = async (e) => {
   e.preventDefault();
   setLoadingAuth(true);
-  console.log(formLogin);
+  console.log(JSON.stringify(formLogin));
   try {
-    const res = await Api.post("/login", formLogin);
+    const res = await Api.post("/login", JSON.stringify(formLogin));
     const data = res.data || res;
     login(data.user, data.token);
 
