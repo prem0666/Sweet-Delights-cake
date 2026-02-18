@@ -34,7 +34,11 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body;
+    console.log("BODY:", req.body);
+      console.log("=== LOGIN HIT ===");
+  console.log("Headers:", req.headers);
+  console.log("Body:", req.body);
+    const { email, password } = req.body || {};
     if (!email || !password) return res.status(400).json({ error: "Missing fields" });
 
     const user = await User.findOne({ email });

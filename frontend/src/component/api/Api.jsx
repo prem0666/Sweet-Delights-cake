@@ -2,7 +2,8 @@ import axios from "axios";
 
 const Api = axios.create({
   baseURL: "https://sweet-delights-cake.onrender.com/api",
-  headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "multipart/form-data" },
+    withCredentials: true, // Include cookies in requests
 });
 
 // Attach token from localStorage on each request

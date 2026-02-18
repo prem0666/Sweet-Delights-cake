@@ -1,8 +1,10 @@
 import React from "react";
 import { useproduct } from "../context/ProductList";
+import Api from "../api/Api";
+import { toast } from "sonner";
 
 const PoductView = () => {
-  const { setShowProductView } = useproduct();
+  const { setShowProductView ,setProducts } = useproduct();
   const fileInputRef = React.useRef(null);
 
   const [form, setForm] = React.useState({
@@ -25,11 +27,14 @@ const PoductView = () => {
   const handleFileChange = (e) => {
     setForm((prev) => ({
       ...prev,
-      image: e.target.files[0],
+      imageUrl: e.target.files[0],
     }));
   };
+  
 
   const handleSubmit = async (e) => {
+e.preventDefault();
+
     const formData = new FormData();
     formData.append("name", form.name);
     formData.append("price", form.price);
@@ -39,10 +44,19 @@ const PoductView = () => {
     formData.append("imageUrl", form.imageUrl);
 
 
+    console.log(formData);
+
+    if (!form.imageUrl) {
+      toast.error("Please attach a reference image.");
+      return;
+    }
+
     e.preventDefault();
 
     try {
       await Api.post("/products", formData);
+      console.log("Submitting form:", form);
+      setProducts(prev => [...prev, { ...form, imageUrl: URL.createObjectURL(form.imageUrl) }]);
 
       toast.success("Product added successfully!");
       setForm({
@@ -56,6 +70,9 @@ const PoductView = () => {
     } catch (err) {
       console.error(err);
       toast.error(err.response?.data?.error || err.message || "Failed to add product",);
+    }
+    finally{
+      setShowProductView(false);
     }
   };
 
@@ -107,52 +124,20 @@ const PoductView = () => {
             <label className="text-sm font-medium leading-none flex flex-col ">
               Category *
             </label>
-            {/* <button
-              type="button"
-              role="combobox"
-              aria-controls="radix-:r1h:"
-              aria-expanded="false"
-              aria-autocomplete="none"
-              dir="ltr"
-              data-state="closed"
-              className="flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&amp;&gt;span]:line-clamp-1"
-            >
-              <span style={{ pointerEvents: "auto" }}>Birthday</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                className="lucide lucide-chevron-down h-4 w-4 opacity-50"
-                aria-hidden="true"
-              >
-                <path d="m6 9 6 6 6-6"></path>
-              </svg>
-            </button> */}
+        
             <select
               name="category"
               value={form.category}
               onChange={handlechange}
               style={{
-                // position: "absolute",
-                // border: "1px solid gray",
-                // width: "1px",
-                // height: "1px",
-                // padding: "0px",
-                // margin: "1px",
                 overflow: "hidden",
-                // clip: "rect(0px, 0px, 0px, 0px)",
                 whiteSpace: "nowrap",
                 overflowWrap: "normal",
               }}
               className="my-4 rounded-md px-4 py-2 text-sm border-input border  text-muted-foreground  ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
             >
-              <option value="birthday" selected="">
+              <option value=""> select </option>
+              <option value="birthday" >
                 Birthday
               </option>
               <option value="wedding">Wedding</option>
@@ -180,13 +165,13 @@ const PoductView = () => {
             </label>
             <label className="border-2 border-dashed rounded-lg p-6 text-center cursor-pointer hover:border-primary/50 transition block">
                   <div className="space-y-2">
-                    {form.image ? (
+                    {form.imageUrl ? (
                       <>
                         <p className="text-sm font-medium text-green-600">
-                          ✅ {form.image.name}
+                          ✅ {form.imageUrl.name}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {(form.image.size / 1024).toFixed(2)} KB
+                          {(form.imageUrl.size / 1024).toFixed(2)} KB
                         </p>
                       </>
                     ) : (
@@ -198,7 +183,7 @@ const PoductView = () => {
                   <input
                     type="file"
                     accept="image/*"
-                    name="image"
+                    name="imageUrl"
                     ref={fileInputRef}
                     onChange={handleFileChange}
                     className="hidden"
@@ -225,9 +210,7 @@ const PoductView = () => {
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+           
             className="lucide lucide-x h-4 w-4"
           >
             <path d="M18 6 6 18"></path>

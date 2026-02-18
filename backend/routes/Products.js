@@ -18,8 +18,8 @@ Products.get('/products', async (req, res) => {
 Products.post('/products', authenticateToken, requireAdmin, upload.single('imageUrl'), async (req, res) => {
   try {
       if (!req.file) return res.status(400).json({ error: "Image required" });
-    const imageUrl = req.file.path; // Assuming the image URL is stored in the file path
-    const { name, price, category, Description, } = req.body;
+      const { name, price, category, Description, } = req.body;
+      const imageUrl = req.file.path; // Assuming the image URL is stored in the file path
     const newProduct = new Product({
       name,
       price,

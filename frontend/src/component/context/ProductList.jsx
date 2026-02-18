@@ -74,6 +74,8 @@ const ProductList = ({ children }) => {
 
     const response = await Api.get("/products")
     setProducts(response.data)
+
+    // console.log(response.data);
   }
   catch(error){ 
     console.error(error.message);
