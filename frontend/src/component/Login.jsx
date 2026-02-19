@@ -36,7 +36,10 @@ const handleLoginSubmit = async (e) => {
   setLoadingAuth(true);
   console.log(JSON.stringify(formLogin));
   try {
-    const res = await Api.post("/login", JSON.stringify(formLogin));
+    const res = await Api.post("/login", {
+      email: formLogin.email,
+      password: formLogin.password,
+    });
     const data = res.data || res;
     login(data.user, data.token);
 

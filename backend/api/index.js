@@ -12,7 +12,7 @@ import Users from "../routes/Users.js";
 dotenv.config();
 const app = express();
 app.use(cors({
-   origin: "http://localhost:5173",
+   origin: ["http://localhost:5173", "https://your-netlify-domain.netlify.app"],
   credentials: true
  }));
 app.use(express.json());
