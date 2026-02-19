@@ -12,7 +12,7 @@ import Users from "../routes/Users.js";
 dotenv.config();
 const app = express();
 app.use(cors({
-   origin: ["http://localhost:5173", "https://cakelive.netlify.app"],
+   origin: ["http://localhost:5173", "https://cakelive.netlify.app", "sweet-delights-cake-pj9thz03g-premtahalani35-9422s-projects.vercel.app"],
   credentials: true
  }));
 app.use(express.json());
